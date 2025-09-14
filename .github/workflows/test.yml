@@ -1,0 +1,63 @@
+name: Test Labs
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Test Lab 1
+      run: |
+        if [ -d "lab1" ] && [ -n "$(find lab1 -name 'test_*.py' -o -name '*_test.py')" ]; then
+          echo "Running Lab 1 tests..."
+          python -m pytest lab1/ -v
+        else
+          echo "No tests found for Lab 1, skipping..."
+        fi
+    
+    - name: Test Lab 2
+      run: |
+        if [ -d "lab2" ] && [ -n "$(find lab2 -name 'test_*.py' -o -name '*_test.py')" ]; then
+          echo "Running Lab 2 tests..."
+          python -m pytest lab2/ -v
+        else
+          echo "No tests found for Lab 2, skipping..."
+        fi
+    
+    - name: Test Lab 3
+      run: |
+        if [ -d "lab3" ] && [ -n "$(find lab3 -name 'test_*.py' -o -name '*_test.py')" ]; then
+          echo "Running Lab 3 tests..."
+          python -m pytest lab3/ -v
+        else
+          echo "No tests found for Lab 3, skipping..."
+        fi
+    
+    - name: Test Lab 4
+      run: |
+        if [ -d "lab4" ] && [ -n "$(find lab4 -name 'test_*.py' -o -name '*_test.py')" ]; then
+          echo "Running Lab 4 tests..."
+          python -m pytest lab4/ -v
+        else
+          echo "No tests found for Lab 4, skipping..."
+        fi
