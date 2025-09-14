@@ -5,30 +5,51 @@ import os
 # Add lab1 to the path so we can import the modules
 sys.path.insert(0, os.path.dirname(__file__))
 
+# Try to import modules individually
+caesar = None
+vigenere = None
+rsa = None
+hack = None
+
 try:
     import caesar
+except ImportError:
+    pass
+
+try:
     import vigenere
+except ImportError:
+    pass
+
+try:
     import rsa
+except ImportError:
+    pass
+
+try:
     import hack
-except ImportError as e:
-    pytest.skip(f"Required module not found: {e}", allow_module_level=True)
+except ImportError:
+    pass
 
 
 class TestCaesar:
     """Tests for Caesar cipher implementation."""
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_encrypt_basic(self):
         """Test basic Caesar cipher encryption."""
         result = caesar.encrypt("Hello, World!", 3)
         expected = "Khoor/#Zruog$"
         assert result == expected, f"Expected {expected}, got {result}"
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_decrypt_basic(self):
         """Test basic Caesar cipher decryption."""
         result = caesar.decrypt("Khoor/#Zruog$", 3)
         expected = "Hello, World!"
         assert result == expected, f"Expected {expected}, got {result}"
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_encrypt_negative_shift(self):
         """Test Caesar encryption with negative shift."""
         plaintext = "ABC"
@@ -39,6 +60,7 @@ class TestCaesar:
         decrypted = caesar.decrypt(result, -1)
         assert decrypted == plaintext
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_full_ascii_range(self):
         """Test Caesar cipher works with all printable ASCII characters."""
         # Test with characters from ASCII 32-126
@@ -47,6 +69,7 @@ class TestCaesar:
         decrypted = caesar.decrypt(encrypted, 5)
         assert decrypted == test_chars
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_wraparound(self):
         """Test that Caesar cipher wraps around correctly."""
         # Test character near end of printable range
@@ -54,6 +77,7 @@ class TestCaesar:
         expected = " "  # ASCII 32 (space)
         assert result == expected
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_zero_shift(self):
         """Test Caesar cipher with zero shift."""
         plaintext = "No change expected!"
@@ -66,18 +90,21 @@ class TestCaesar:
 class TestVigenere:
     """Tests for Vigenere cipher implementation."""
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_encrypt_basic(self):
         """Test basic Vigenere cipher encryption."""
         result = vigenere.encrypt("attack at dawn", "LEMON")
         expected = "lbfpdu#|#v|{`"
         assert result == expected, f"Expected {expected}, got {result}"
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_decrypt_basic(self):
         """Test basic Vigenere cipher decryption."""
         result = vigenere.decrypt("lbfpdu#|#v|{`", "LEMON")
         expected = "attack at dawn"
         assert result == expected, f"Expected {expected}, got {result}"
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_case_insensitive_key(self):
         """Test that Vigenere key is case insensitive."""
         plaintext = "test"
@@ -87,6 +114,7 @@ class TestVigenere:
         result_lower = vigenere.encrypt(plaintext, lower_key)
         assert result_upper == result_lower
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_key_cycling(self):
         """Test that Vigenere key cycles correctly."""
         # Use a short key with longer text to test cycling
@@ -96,6 +124,7 @@ class TestVigenere:
         decrypted = vigenere.decrypt(encrypted, key)
         assert decrypted == plaintext
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_non_alpha_key_ignored(self):
         """Test that non-alphabetic characters in key are ignored."""
         plaintext = "test"
@@ -105,6 +134,7 @@ class TestVigenere:
         result_clean = vigenere.encrypt(plaintext, key_clean)
         assert result_with_numbers == result_clean
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_empty_key(self):
         """Test behavior with empty or invalid key."""
         plaintext = "test"
@@ -121,6 +151,7 @@ class TestVigenere:
 class TestRSA:
     """Tests for RSA implementation."""
     
+    @pytest.mark.skipif(rsa is None, reason="rsa module not found")
     def test_is_prime(self):
         """Test prime number detection."""
         assert rsa.is_prime(2) == True
@@ -132,6 +163,7 @@ class TestRSA:
         assert rsa.is_prime(1) == False
         assert rsa.is_prime(0) == False
     
+    @pytest.mark.skipif(rsa is None, reason="rsa module not found")
     def test_gcd(self):
         """Test greatest common divisor calculation."""
         assert rsa.gcd(48, 18) == 6
@@ -139,6 +171,7 @@ class TestRSA:
         assert rsa.gcd(100, 25) == 25
         assert rsa.gcd(7, 7) == 7
     
+    @pytest.mark.skipif(rsa is None, reason="rsa module not found")
     def test_multiplicative_inverse(self):
         """Test multiplicative inverse calculation."""
         # Test known values
@@ -148,6 +181,7 @@ class TestRSA:
         result = rsa.multiplicative_inverse(7, 40)
         assert (7 * result) % 40 == 1
     
+    @pytest.mark.skipif(rsa is None, reason="rsa module not found")
     def test_generate_keypair(self):
         """Test RSA key pair generation."""
         p, q = 17, 19  # Small primes for testing
@@ -168,6 +202,7 @@ class TestRSA:
         phi = (p - 1) * (q - 1)
         assert (e * d) % phi == 1
     
+    @pytest.mark.skipif(rsa is None, reason="rsa module not found")
     def test_rsa_encrypt_decrypt_basic(self):
         """Test basic RSA encryption and decryption."""
         p, q = 17, 19
@@ -181,6 +216,7 @@ class TestRSA:
         assert isinstance(encrypted, list)
         assert all(isinstance(x, int) for x in encrypted)
     
+    @pytest.mark.skipif(rsa is None, reason="rsa module not found")
     def test_rsa_various_characters(self):
         """Test RSA with various characters."""
         p, q = 61, 53  # Larger primes for more character support
@@ -202,6 +238,7 @@ class TestRSA:
 class TestHack:
     """Tests for Caesar cipher hacking."""
     
+    @pytest.mark.skipif(hack is None or caesar is None, reason="hack or caesar module not found")
     def test_hack_basic(self):
         """Test basic Caesar cipher hacking."""
         # Create a known encrypted message
@@ -216,6 +253,7 @@ class TestHack:
         assert result_text == plaintext
         assert result_shift == shift
     
+    @pytest.mark.skipif(hack is None or caesar is None, reason="hack or caesar module not found")
     def test_hack_common_english_text(self):
         """Test hacking with common English text."""
         plaintext = "this is a test message with common english words"
@@ -228,6 +266,7 @@ class TestHack:
         assert result_shift == shift
         assert result_text == plaintext
     
+    @pytest.mark.skipif(hack is None, reason="hack module not found")
     def test_hack_returns_valid_format(self):
         """Test that hack function returns correct format."""
         ciphertext = "encrypted text"
@@ -246,6 +285,7 @@ class TestHack:
 class TestIntegration:
     """Integration tests across multiple modules."""
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_roundtrip_various_shifts(self):
         """Test Caesar cipher roundtrip with various shifts."""
         plaintext = "Integration test message!"
@@ -255,6 +295,7 @@ class TestIntegration:
             decrypted = caesar.decrypt(encrypted, shift)
             assert decrypted == plaintext, f"Failed for shift {shift}"
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_roundtrip_various_keys(self):
         """Test Vigenere cipher roundtrip with various keys."""
         plaintext = "This is a longer message for testing purposes."
@@ -270,6 +311,7 @@ class TestIntegration:
 class TestErrorHandling:
     """Test error handling and edge cases."""
     
+    @pytest.mark.skipif(caesar is None, reason="caesar module not found")
     def test_caesar_empty_string(self):
         """Test Caesar cipher with empty string."""
         result_encrypt = caesar.encrypt("", 5)
@@ -278,6 +320,7 @@ class TestErrorHandling:
         result_decrypt = caesar.decrypt("", 5)
         assert result_decrypt == ""
     
+    @pytest.mark.skipif(vigenere is None, reason="vigenere module not found")
     def test_vigenere_empty_string(self):
         """Test Vigenere cipher with empty string."""
         result_encrypt = vigenere.encrypt("", "KEY")
@@ -286,6 +329,7 @@ class TestErrorHandling:
         result_decrypt = vigenere.decrypt("", "KEY")
         assert result_decrypt == ""
     
+    @pytest.mark.skipif(rsa is None, reason="rsa module not found")
     def test_rsa_empty_string(self):
         """Test RSA with empty string."""
         p, q = 17, 19
